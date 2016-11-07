@@ -19,7 +19,7 @@ describe file('/etc/logrotate.d/mysql') do
   it { should be_file }
 end
 
-describe service('mysql') do
-  it { should be_installed }
-end
+# describe service('mysql') do
+#   it { should be_installed }
+# end
 
