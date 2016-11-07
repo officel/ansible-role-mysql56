@@ -1,0 +1,36 @@
+---
+# tasks file for ansible-role-mysql56
+
+- name: mysql| install
+  yum:
+    name: "{{ mysql_community_client| default('mysql-community-server') }}"
+    enablerepo: "mysql-community*,mysql-tools*,mysql56*"
+    state: present
+  tags: ['mysql']
+
+- name: edit /etc/my.cnf
+  ini_file: dest=/etc/my.cnf
+            section="{{ item.s }}"
+            option="{{  item.o }}"
+            value="{{   item.v }}"
+  with_items:
+    # mysqld
+    - { s: "mysqld" , o: "user" , v: "mysql" }
+    # MySQL5.5 later is
+    - { s: "mysqld" , o: "character-set-server" , v: "utf8" }
+    # todo 保留
+    # - { s: "mysqld" , o: "skip-character-set-client-handshake" , v: "" }
+    - { s: "mysqld" , o: "default-storage-engine" , v: "innodb" }
+    - { s: "mysqld" , o: "collation-server" , v: "utf8_general_ci" }
+    - { s: "mysqld" , o: "innodb_file_format" , v: "Barracuda" }
+    - { s: "mysqld" , o: "innodb_file_per_table" , v: "1" }
+    # MySQL5.6 later see http://d.hatena.ne.jp/hiroi10/20121104/1352037845
+    - { s: "mysqld" , o: "explicit_defaults_for_timestamp" , v: "1" }
+    # client
+    - { s: "client" , o: "default-character-set" , v: "utf8" }
+    # mysql
+    - { s: "mysql"  , o: "default-character-set" , v: "utf8" }
+    # mysqldump
+    - { s: "mysqldump" , o: "default-character-set" , v: "utf8" }
+  tags: ['mysql']
+
